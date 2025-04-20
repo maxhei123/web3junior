@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Download and manage game mods from ModVault">
+    <title>ModVault - Game Mods Collection</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/card.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="nav-left">
+                <h2 class="logo">ModVault</h2>
+                <ul class="nav-links">
+                    <li><a href="index.html" class="active">Popular</a></li>
+                    <li><a href="recent.html">Recent</a></li>
+                    <li class="dropdown">
+                        <a href="categories.html">Categories</a>
+                        <div class="dropdown-content">
+                            <a href="categories.html#graphics">Graphics</a>
+                            <a href="categories.html#gameplay">Gameplay</a>
+                            <a href="categories.html#vehicles">Vehicles</a>
+                            <a href="categories.html#environment">Environment</a>
+                            <a href="categories.html#content">Content</a>
+                        </div>
+                    </li>
+                    <li><a href="upload.html">Upload</a></li>
+                </ul>
+            </div>
+            <div class="nav-right">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search mods...">
+                    <i class="search-icon">🔍</i>
+                </div>
+                <button class="login-btn">Login</button>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <h1>Popular Mods</h1>
+        <div class="mods-grid">
+            <!-- Mods will be loaded dynamically via JavaScript -->
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
