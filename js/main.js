@@ -124,14 +124,116 @@ const initSearch = () => {
   });
 };
 
-// Improved login system with session handling
+// Improved login system with better session management
 const initLoginSystem = () => {
   const form = document.getElementById('loginForm');
   if (form) {
     form.addEventListener('submit', handleLoginSubmit);
     setupPasswordToggle(form);
   }
-  updateLoginButton();
+  checkAndUpdateLoginState();
+};
+
+// Enhanced session management
+const checkAndUpdateLoginState = () => {
+  const sessionData = JSON.parse(localStorage.getItem('userSession') || '{}');
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true' && 
+                     sessionData.expires > Date.now();
+
+  if (!isLoggedIn && sessionData.expires) {
+    // Clear expired session
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('userSession');
+  }
+
+  updateLoginButtonState(isLoggedIn, sessionData.email);
+  return isLoggedIn;
+};
+
+// Improved login button state management
+const updateLoginButtonState = (isLoggedIn, email) => {
+  const loginButtons = document.querySelectorAll('.login-btn');
+  loginButtons.forEach(btn => {
+    if (isLoggedIn) {
+      btn.textContent = `Logout (${email})`;
+      btn.classList.add('logged-in');
+      btn.onclick = handleLogout;
+    } else {
+      btn.textContent = 'Login';
+      btn.classList.remove('logged-in');
+      btn.onclick = () => window.location.href = 'login.html';
+    }
+  });
+};
+
+// New logout handler
+const handleLogout = () => {
+  localStorage.removeItem('isLoggedIn');
+  localStorage.removeItem('userSession');
+  window.location.reload();
+};
+
+// Improved login submit handler with better validation
+const handleLoginSubmit = async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const submitBtn = form.querySelector('.submit-btn');
+  const email = form.querySelector('#email').value.trim();
+  const password = form.querySelector('#password').value;
+  
+  if (!email || !password) {
+    showLoginError(submitBtn, 'Please fill in all fields');
+    return;
+  }
+  
+  try {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span>Logging in...</span><div class="loading-dots"></div>';
+    
+    // Simulate API call with validation
+    await new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (!email.includes('@')) {
+          reject(new Error('Invalid email format'));
+          return;
+        }
+        if (password.length < 6) {
+          reject(new Error('Invalid password'));
+          return;
+        }
+        resolve();
+      }, 1000);
+    });
+    
+    // Set session with secure expiry
+    const sessionData = {
+      email,
+      expires: Date.now() + (24 * 60 * 60 * 1000), // 24 hours
+      lastActivity: Date.now()
+    };
+    
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('userSession', JSON.stringify(sessionData));
+    
+    submitBtn.innerHTML = 'Success! Redirecting...';
+    submitBtn.style.background = '#4ecca3';
+    
+    setTimeout(() => window.location.href = 'index.html', 1000);
+  } catch (error) {
+    showLoginError(submitBtn, error.message);
+  }
+};
+
+// New helper for showing login errors
+const showLoginError = (submitBtn, message) => {
+  submitBtn.disabled = false;
+  submitBtn.innerHTML = message;
+  submitBtn.style.background = '#ff4444';
+  
+  setTimeout(() => {
+    submitBtn.innerHTML = 'Login';
+    submitBtn.style.background = '';
+  }, 3000);
 };
 
 // Enhanced password visibility toggle
@@ -145,55 +247,6 @@ const setupPasswordToggle = (form) => {
       passwordInput.type = type;
       toggleBtn.innerHTML = type === 'password' ? '👁️' : '👁️‍🗨️';
     });
-  }
-};
-
-// Improved login submit handler
-const handleLoginSubmit = async (e) => {
-  e.preventDefault();
-  const form = e.target;
-  const submitBtn = form.querySelector('.submit-btn');
-  const email = form.querySelector('#email').value;
-  
-  if (!email) return;
-  
-  try {
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span>Logging in...</span><div class="loading-dots"></div>';
-    
-    // Simulate API call with better error handling
-    await new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (email.includes('@')) {
-          resolve();
-        } else {
-          reject(new Error('Invalid email'));
-        }
-      }, 1500);
-    });
-    
-    // Store session data with expiry
-    const sessionData = {
-      email,
-      expires: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
-    };
-    
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('userSession', JSON.stringify(sessionData));
-    
-    submitBtn.innerHTML = 'Success!';
-    submitBtn.style.background = '#4ecca3';
-    
-    setTimeout(() => window.location.href = 'index.html', 1000);
-  } catch (error) {
-    submitBtn.innerHTML = `Login Failed: ${error.message}`;
-    submitBtn.style.background = '#ff4444';
-    
-    setTimeout(() => {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = 'Login';
-      submitBtn.style.background = '';
-    }, 2000);
   }
 };
 
