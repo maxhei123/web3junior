@@ -180,9 +180,21 @@ const handleLoginSubmit = async (e) => {
   const submitBtn = form.querySelector('.submit-btn');
   const email = form.querySelector('#email').value.trim();
   const password = form.querySelector('#password').value;
+  const rememberMe = form.querySelector('input[name="remember"]').checked;
+  
+  // Clear any previous error states
+  clearLoginErrors(form);
   
   if (!email || !password) {
-    showLoginError(submitBtn, 'Please fill in all fields');
+    showFieldErrors(form, { 
+      email: !email ? 'Email is required' : '',
+      password: !password ? 'Password is required' : ''
+    });
+    return;
+  }
+  
+  if (!isValidEmail(email)) {
+    showFieldErrors(form, { email: 'Please enter a valid email address' });
     return;
   }
   
@@ -193,6 +205,7 @@ const handleLoginSubmit = async (e) => {
     // Simulate API call with validation
     await new Promise((resolve, reject) => {
       setTimeout(() => {
+        // In a real app, this would be an actual API call
         if (!email.includes('@')) {
           reject(new Error('Invalid email format'));
           return;
@@ -208,19 +221,26 @@ const handleLoginSubmit = async (e) => {
     // Set session with secure expiry
     const sessionData = {
       email,
-      expires: Date.now() + (24 * 60 * 60 * 1000), // 24 hours
-      lastActivity: Date.now()
+      expires: rememberMe ? Date.now() + (30 * 24 * 60 * 60 * 1000) : Date.now() + (24 * 60 * 60 * 1000), // 30 days if remember me, else 24 hours
+      lastActivity: Date.now(),
+      sessionId: generateSessionId()
     };
     
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('userSession', JSON.stringify(sessionData));
+    // Store session data securely
+    securelyStoreSession(sessionData);
     
-    submitBtn.innerHTML = 'Success! Redirecting...';
+    submitBtn.innerHTML = '<span>Success!</span>✓';
     submitBtn.style.background = '#4ecca3';
     
-    setTimeout(() => window.location.href = 'index.html', 1000);
+    // Smooth transition to index page
+    setTimeout(() => {
+      document.body.style.opacity = '0';
+      document.body.style.transition = 'opacity 0.5s ease';
+      setTimeout(() => window.location.href = 'index.html', 500);
+    }, 1000);
   } catch (error) {
     showLoginError(submitBtn, error.message);
+    logFailedAttempt(email); // Track failed attempts for security
   }
 };
 
@@ -565,4 +585,64 @@ const setupFormValidation = (form) => {
       meter.style.backgroundColor = `hsl(${strength.score * 30}, 70%, 45%)`;
     });
   });
+};
+
+// Helper functions for login system
+const clearLoginErrors = (form) => {
+  form.querySelectorAll('.error-message').forEach(el => el.remove());
+  form.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
+};
+
+const showFieldErrors = (form, errors) => {
+  Object.entries(errors).forEach(([field, message]) => {
+    if (!message) return;
+    const input = form.querySelector(`#${field}`);
+    if (!input) return;
+    
+    input.classList.add('field-error');
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.textContent = message;
+    input.parentElement.appendChild(errorDiv);
+  });
+};
+
+const isValidEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+const generateSessionId = () => {
+  return Array.from(crypto.getRandomValues(new Uint8Array(16)))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+};
+
+const securelyStoreSession = (sessionData) => {
+  try {
+    // In a real app, you might want to encrypt this data
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('userSession', JSON.stringify(sessionData));
+    
+    // Store last activity time for session timeout
+    localStorage.setItem('lastActivity', Date.now().toString());
+  } catch (error) {
+    console.error('Failed to store session:', error);
+    // Fallback to session storage if localStorage is full
+    sessionStorage.setItem('isLoggedIn', 'true');
+    sessionStorage.setItem('userSession', JSON.stringify(sessionData));
+  }
+};
+
+const logFailedAttempt = (email) => {
+  const attempts = JSON.parse(sessionStorage.getItem('failedAttempts') || '{}');
+  attempts[email] = (attempts[email] || 0) + 1;
+  
+  if (attempts[email] >= 5) {
+    // Implement temporary lockout
+    const lockoutTime = Date.now() + (15 * 60 * 1000); // 15 minutes
+    attempts[`${email}_lockout`] = lockoutTime;
+  }
+  
+  sessionStorage.setItem('failedAttempts', JSON.stringify(attempts));
 };
