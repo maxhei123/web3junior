@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sign up for ModVault">
+    <title>Sign Up - ModVault</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/card.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="nav-left">
+                <h2 class="logo">ModVault</h2>
+                <ul class="nav-links">
+                    <li><a href="index.html">Popular</a></li>
+                    <li><a href="recent.html">Recent</a></li>
+                    <li class="dropdown">
+                        <a href="categories.html">Categories</a>
+                        <div class="dropdown-content">
+                            <a href="categories.html#graphics">Graphics</a>
+                            <a href="categories.html#gameplay">Gameplay</a>
+                            <a href="categories.html#vehicles">Vehicles</a>
+                            <a href="categories.html#environment">Environment</a>
+                            <a href="categories.html#content">Content</a>
+                        </div>
+                    </li>
+                    <li><a href="upload.html">Upload</a></li>
+                </ul>
+            </div>
+            <div class="nav-right">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search mods...">
+                    <i class="search-icon">🔍</i>
+                </div>
+                <button class="login-btn">Login</button>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <h1>Create Account</h1>
+        <div class="login-form signup-form">
+            <form id="signupForm" novalidate>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        required 
+                        minlength="3" 
+                        maxlength="20" 
+                        pattern="[a-zA-Z0-9_-]+"
+                        autocomplete="username"
+                    >
+                    <span class="validation-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        required
+                        autocomplete="email"
+                    >
+                    <span class="validation-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-input">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            required 
+                            minlength="8"
+                            autocomplete="new-password"
+                            aria-describedby="password-requirements"
+                        >
+                        <button type="button" class="toggle-password" aria-label="Toggle password visibility">👁️</button>
+                    </div>
+                    <div id="password-requirements" class="password-requirements">
+                        Password must contain:
+                        <ul>
+                            <li data-requirement="length">At least 8 characters</li>
+                            <li data-requirement="uppercase">One uppercase letter</li>
+                            <li data-requirement="lowercase">One lowercase letter</li>
+                            <li data-requirement="number">One number</li>
+                            <li data-requirement="special">One special character</li>
+                        </ul>
+                    </div>
+                    <span class="validation-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <div class="password-input">
+                        <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            name="confirmPassword" 
+                            required
+                            autocomplete="new-password"
+                        >
+                        <button type="button" class="toggle-password" aria-label="Toggle password visibility">👁️</button>
+                    </div>
+                    <span class="validation-message"></span>
+                </div>
+
+                <div class="terms-checkbox">
+                    <label>
+                        <input type="checkbox" name="terms" required>
+                        I agree to the <a href="#" target="_blank">Terms of Service</a> and <a href="#" target="_blank">Privacy Policy</a>
+                    </label>
+                    <span class="validation-message"></span>
+                </div>
+
+                <button type="submit" class="submit-btn">Create Account</button>
+
+                <div class="auth-divider">
+                    <span>Or sign up with</span>
+                </div>
+
+                <div class="social-login">
+                    <button type="button" class="social-btn google">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google">
+                        Google
+                    </button>
+                    <button type="button" class="social-btn discord">
+                        <img src="https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_white_RGB.svg" alt="Discord">
+                        Discord
+                    </button>
+                </div>
+
+                <p class="login-prompt">
+                    Already have an account? <a href="login.html">Login</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
